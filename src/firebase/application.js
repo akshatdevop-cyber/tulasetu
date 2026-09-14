@@ -15,7 +15,10 @@ import { db } from './config.js';
 import { calculateExpiryDate } from '../constants/legalMetrologyRules.js';
 import { recordAuditLog } from './audit.ts';
 
-const applicationsRef = collection(db, 'applications');
+function getApplicationsRef() {
+  if (!db) throw new Error('Firebase is not configured.');
+  return collection(db, 'applications');
+}
 
 /**
  * Submit a new verification application.
@@ -24,7 +27,7 @@ const applicationsRef = collection(db, 'applications');
  * @returns {Promise<string>} The Firestore document ID of the new application
  */
 export async function submitApplication(data, uid) {
-  const docRef = await addDoc(applicationsRef, {
+  const docRef = await addDoc(getApplicationsRef(), {
     ...data,
     ownerId: uid,
     status: 'Pending',
@@ -39,7 +42,7 @@ export async function submitApplication(data, uid) {
  */
 export async function getPendingApplications() {
   const q = query(
-    applicationsRef,
+    getApplicationsRef(),
     where('status', '==', 'Pending'),
     orderBy('submittedAt', 'desc')
   );
@@ -53,11 +56,23 @@ export async function getPendingApplications() {
  * @returns {function} Unsubscribe function
  */
 export function onAllApplicationsSnapshot(callback) {
-  const q = query(applicationsRef, orderBy('submittedAt', 'desc'));
-  return onSnapshot(q, (snapshot) => {
-    const apps = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-    callback(apps);
-  });
+  if (!db) {
+    console.error('[Tulasetu] Cannot subscribe to applications: Firebase is not configured.');
+    callback([]);
+    return () => {};
+  }
+  const q = query(getApplicationsRef(), orderBy('submittedAt', 'desc'));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const apps = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      callback(apps);
+    },
+    (error) => {
+      console.error('[Tulasetu] Applications listener failed:', error?.code || error?.message || error);
+      callback([]);
+    }
+  );
 }
 
 /**
@@ -67,15 +82,27 @@ export function onAllApplicationsSnapshot(callback) {
  * @returns {function} Unsubscribe function
  */
 export function getUserApplications(uid, callback) {
+  if (!db) {
+    console.error('[Tulasetu] Cannot subscribe to applications: Firebase is not configured.');
+    callback([]);
+    return () => {};
+  }
   const q = query(
-    applicationsRef,
+    getApplicationsRef(),
     where('ownerId', '==', uid),
     orderBy('submittedAt', 'desc')
   );
-  return onSnapshot(q, (snapshot) => {
-    const apps = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-    callback(apps);
-  });
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const apps = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      callback(apps);
+    },
+    (error) => {
+      console.error('[Tulasetu] User applications listener failed:', error?.code || error?.message || error);
+      callback([]);
+    }
+  );
 }
 
 /**
@@ -84,6 +111,7 @@ export function getUserApplications(uid, callback) {
  * @returns {Promise<object | null>} The application object or null if not found
  */
 export async function getApplicationById(appId) {
+  if (!db) throw new Error('Firebase is not configured.');
   const snap = await getDoc(doc(db, 'applications', appId));
   if (!snap.exists()) return null;
   return { id: snap.id, ...snap.data() };
@@ -113,6 +141,7 @@ export async function approveApplication(appId, instrumentType, officerName, rem
     expiryDate = calculateExpiryDate(now, instrumentType).toISOString();
   }
 
+  if (!db) throw new Error('Firebase is not configured.');
   const batch = writeBatch(db);
 
   // 1. Update the original application document
@@ -164,6 +193,7 @@ export async function approveApplication(appId, instrumentType, officerName, rem
  * @returns {Promise<void>}
  */
 export async function rejectApplication(appId, remarks, officerName) {
+  if (!db) throw new Error('Firebase is not configured.');
   await updateDoc(doc(db, 'applications', appId), {
     status: 'Rejected',
     inspectionResult: 'Fail',
@@ -183,6 +213,7 @@ export async function rejectApplication(appId, remarks, officerName) {
  * @returns {Promise<object | null>} The matching application or null
  */
 export async function verifyCertificate(certificateId) {
+  if (!db) throw new Error('Firebase is not configured.');
   const clean = certificateId.trim().toUpperCase();
   const certDoc = await getDoc(doc(db, 'certificates', clean));
   if (!certDoc.exists()) return null;

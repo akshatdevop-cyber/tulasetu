@@ -24,7 +24,10 @@ interface AuditLogEntry {
   timestamp: string;
 }
 
-const auditLogsRef = collection(db, 'auditLogs');
+function getAuditLogsRef() {
+  if (!db) throw new Error('Firebase is not configured.');
+  return collection(db, 'auditLogs');
+}
 
 /**
  * Record an audit log entry for important actions.
@@ -50,7 +53,7 @@ export async function recordAuditLog(
   };
 
   try {
-    await addDoc(auditLogsRef, entry);
+    await addDoc(getAuditLogsRef(), entry);
   } catch (err) {
     console.error('Failed to record audit log:', err);
     // Non-blocking: audit failures should not break the main workflow

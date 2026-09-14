@@ -11,23 +11,31 @@ import { db } from './config.js';
 import { OfficerRegistration, Officer } from '../types';
 import { recordAuditLog } from './audit';
 
-const registrationsRef = collection(db, 'officerRegistrations');
-const officialRecordsRef = collection(db, 'officialOfficerRecords');
+function getRegistrationsRef() {
+  if (!db) throw new Error('Firebase is not configured.');
+  return collection(db, 'officerRegistrations');
+}
+
+function getOfficialRecordsRef() {
+  if (!db) throw new Error('Firebase is not configured.');
+  return collection(db, 'officialOfficerRecords');
+}
 
 export async function getPendingRegistrations(): Promise<OfficerRegistration[]> {
-  const q = query(registrationsRef, where('verificationStatus', '==', 'pending'));
+  const q = query(getRegistrationsRef(), where('verificationStatus', '==', 'pending'));
   const snapshot = await getDocs(q);
   return snapshot.docs.map(doc => ({ ...doc.data() } as OfficerRegistration));
 }
 
 export async function getOfficialRecord(officerId: string) {
-  const q = query(officialRecordsRef, where('officerId', '==', officerId));
+  const q = query(getOfficialRecordsRef(), where('officerId', '==', officerId));
   const snapshot = await getDocs(q);
   if (snapshot.empty) return null;
   return { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
 }
 
 export async function approveOfficerRegistration(uid: string, adminUid: string) {
+  if (!db) throw new Error('Firebase is not configured.');
   const regDocRef = doc(db, 'officerRegistrations', uid);
   const regDocSnap = await getDoc(regDocRef);
   if (!regDocSnap.exists()) throw new Error("Registration not found");
@@ -71,6 +79,7 @@ export async function approveOfficerRegistration(uid: string, adminUid: string) 
 }
 
 export async function rejectOfficerRegistration(uid: string, adminUid: string, reason: string) {
+  if (!db) throw new Error('Firebase is not configured.');
   const regDocRef = doc(db, 'officerRegistrations', uid);
   const batch = writeBatch(db);
   const now = new Date().toISOString();

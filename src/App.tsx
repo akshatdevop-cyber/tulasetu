@@ -3,7 +3,19 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ConfigErrorScreen } from './components/ConfigErrorScreen';
+import { firebaseReady, firebaseConfigError } from './firebase/config.js';
 import { LandingPage } from './pages/LandingPage';
+import { BusinessDashboard } from './pages/BusinessDashboard';
+import { ApplyPage } from './pages/ApplyPage';
+import { OfficerDashboard } from './pages/OfficerDashboard';
+import { ReviewPage } from './pages/ReviewPage';
+import { CertificatePage } from './pages/CertificatePage';
+import { VerifyPage } from './pages/VerifyPage';
+import { OfficerSignup } from './pages/OfficerSignup';
+import { OfficerVerificationPage } from './pages/admin/OfficerVerificationPage';
+import { Scale } from 'lucide-react';
 import { BusinessDashboard } from './pages/BusinessDashboard';
 import { ApplyPage } from './pages/ApplyPage';
 import { OfficerDashboard } from './pages/OfficerDashboard';
@@ -52,12 +64,25 @@ const AppRoutes: React.FC = () => {
 };
 
 export default function App() {
+  if (!firebaseReady) {
+    return (
+      <ConfigErrorScreen
+        message={
+          firebaseConfigError ||
+          'Firebase is not configured. Set VITE_FIREBASE_* environment variables and redeploy.'
+        }
+      />
+    );
+  }
+
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-        <Toaster position="bottom-right" />
-      </BrowserRouter>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+          <Toaster position="bottom-right" />
+        </BrowserRouter>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
