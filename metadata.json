@@ -1,0 +1,6 @@
+{
+  "name": "Tulasetu",
+  "description": "Tulasetu — Legal Metrology verification with statutory validity calculation, QR generation, and PDF export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

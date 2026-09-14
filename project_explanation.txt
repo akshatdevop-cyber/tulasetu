@@ -1,0 +1,797 @@
+================================================================================
+  LEGAL METROLOGY VERIFICATION PORTAL — COMPLETE PROJECT DOCUMENTATION
+  Smart India Hackathon 2026 | Problem Statement ID: SIH26036
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1.  Project Overview
+2.  Problem Statement & Real-World Context
+3.  Technology Stack
+4.  Directory Structure & File Map
+5.  Data Models (TypeScript Interfaces)
+6.  Firebase Collections (Database Schema)
+7.  User Roles & Access Control
+8.  Authentication Flow
+9.  Core Workflows
+    9.1  Business User Workflow
+    9.2  Officer Workflow
+    9.3  Admin Workflow
+    9.4  Public Verification Workflow
+10. Feature Breakdown by Page
+11. GIS & Map Integration
+12. Automatic Officer Allocation Algorithm
+13. Audit Logging System
+14. Certificate Generation (QR + PDF)
+15. Security Measures
+16. Legal Metrology Rules Engine
+17. Routing & Navigation
+18. Dependencies & Packages
+19. How to Run the Project
+20. Future Enhancements
+
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+Project Name     : Legal Metrology Verification Portal
+Hackathon        : Smart India Hackathon 2026
+Problem ID       : SIH26036
+Category         : Government / Regulatory Technology
+
+This is a full-stack web application that digitizes the statutory verification
+process for commercial weighing and measuring instruments in India. Under the
+Legal Metrology Act, 2009 (Section 24), all commercial instruments such as
+weighing scales, capacity measures, length tapes, beam scales, counter machines,
+and tank lorries must be periodically verified and stamped by authorized
+Government officers.
+
+This portal replaces the manual, paper-based verification system with a digital
+workflow covering:
+  - Online application submission by businesses
+  - Automatic allocation of applications to jurisdiction officers
+  - Digital inspection review and certificate issuance
+  - QR-code-based public certificate verification
+  - GIS-based mapping of applications and officer locations
+  - Administrative oversight with workload monitoring and heatmaps
+
+
+================================================================================
+2. PROBLEM STATEMENT & REAL-WORLD CONTEXT
+================================================================================
+
+Under current practice in India:
+  - Businesses physically visit the Legal Metrology Department to submit forms
+  - Officers manually inspect instruments and issue handwritten certificates
+  - Certificates are paper-based and easily forged
+  - There is no centralized tracking of instrument verification status
+  - Consumers have no way to verify if a shop's weighing scale is legally certified
+
+This portal solves all of these problems by providing:
+  1. An online submission portal for businesses
+  2. A digital review workflow for officers
+  3. Tamper-proof digital certificates with QR codes
+  4. A public verification page for consumers and field inspectors
+  5. Automatic statutory expiry tracking (12 or 24 months per instrument type)
+  6. GIS integration for location-based assignment and routing
+
+Legal Reference:
+  - Legal Metrology Act, 2009 (Sections 24, 33)
+  - Legal Metrology (General) Rules, 2011 (Rule 24)
+  - Penalty for unverified instruments: Rs. 2,000 to Rs. 10,000 (Section 33)
+
+
+================================================================================
+3. TECHNOLOGY STACK
+================================================================================
+
+Layer            | Technology               | Purpose
+-----------------+--------------------------+----------------------------------------
+Frontend         | React 18+ (via Vite)     | Component-based UI framework
+Language         | TypeScript               | Type-safe development
+Styling          | Tailwind CSS             | Utility-first CSS framework
+Routing          | React Router DOM v6      | Client-side page routing
+Backend          | Firebase                 | Serverless backend platform
+Database         | Cloud Firestore          | NoSQL document database
+Authentication   | Firebase Authentication  | Email/password auth
+Storage          | Firebase Storage         | Officer ID card image uploads
+Maps             | React-Leaflet + Leaflet  | Interactive map rendering
+Spatial Math     | @turf/turf               | Geospatial distance calculations
+PDF Generation   | jsPDF                    | Client-side PDF creation
+QR Codes         | qrcode.react             | SVG QR code generation
+Notifications    | react-hot-toast          | In-app toast notifications
+Icons            | Lucide React             | Modern icon library
+Build Tool       | Vite                     | Fast development server & bundler
+
+
+================================================================================
+4. DIRECTORY STRUCTURE & FILE MAP
+================================================================================
+
+d:\legal-metrology-verification-portal\
+│
+├── src\
+│   ├── main.tsx                          # React entry point
+│   ├── App.tsx                           # Root component, routing, Toaster
+│   ├── index.css                         # Global styles
+│   ├── types.ts                          # TypeScript interfaces & type definitions
+│   │
+│   ├── components\
+│   │   ├── Navbar.tsx                    # Top navigation bar (role-aware)
+│   │   └── GISMap.tsx                    # Leaflet map component (markers, routes)
+│   │
+│   ├── constants\
+│   │   └── legalMetrologyRules.js        # Instrument categories, expiry rules, penalties
+│   │
+│   ├── context\
+│   │   └── AuthContext.tsx               # Authentication provider & role management
+│   │
+│   ├── firebase\
+│   │   ├── config.js                     # Firebase app initialization & Firestore instance
+│   │   ├── auth.js                       # Login, signup, logout, getUserProfile
+│   │   ├── application.js               # CRUD operations for applications collection
+│   │   ├── officer.ts                    # Officer registration submission
+│   │   ├── admin.ts                      # Admin functions (approve/reject officers)
+│   │   ├── allocation.ts                 # Auto-allocation algorithm (workload + distance)
+│   │   └── audit.ts                      # Audit logging for all critical actions
+│   │
+│   └── pages\
+│       ├── LandingPage.tsx               # Home page with dual login cards
+│       ├── BusinessDashboard.tsx         # Business user dashboard (list applications)
+│       ├── ApplyPage.tsx                 # Application submission form + GIS map
+│       ├── OfficerDashboard.tsx          # Officer dashboard (queue, map, route planning)
+│       ├── OfficerSignup.tsx             # Officer registration with ID card upload
+│       ├── ReviewPage.tsx                # Detailed inspection review page
+│       ├── CertificatePage.tsx           # Certificate display + PDF download
+│       ├── VerifyPage.tsx                # Public certificate verification
+│       └── admin\
+│           └── OfficerVerificationPage.tsx  # Admin dashboard (3 tabs)
+│
+├── public\                               # Static assets
+├── package.json                          # Dependencies & scripts
+├── vite.config.ts                        # Vite configuration
+├── tailwind.config.js                    # Tailwind CSS configuration
+├── tsconfig.json                         # TypeScript configuration
+└── implentation20my%20code.md            # Implementation roadmap (7 phases)
+
+
+================================================================================
+5. DATA MODELS (TypeScript Interfaces)
+================================================================================
+
+Defined in: src/types.ts
+
+--- UserRole ---
+  'business' | 'officer' | 'pending_officer' | 'admin' | null
+
+--- ApplicationStatus ---
+  'submitted' | 'under_review' | 'inspection_scheduled' | 'Approved' |
+  'Rejected' | 'Revoked' | 'Pending'
+
+--- VerificationStatus ---
+  'pending' | 'approved' | 'rejected'
+
+--- Location ---
+  {
+    address    : string    (Physical address)
+    district   : string    (District name for jurisdiction matching)
+    state      : string    (State name)
+    latitude   : number    (GPS latitude)
+    longitude  : number    (GPS longitude)
+  }
+
+--- OfficerRegistration ---
+  {
+    uid                : string             (Firebase Auth UID)
+    name               : string             (Full name)
+    email              : string             (Official email)
+    officerId          : string             (Government officer ID)
+    department         : string             (Department name)
+    designation        : string             (Rank/designation)
+    district           : string             (Jurisdiction district)
+    state              : string             (Jurisdiction state)
+    idCardImageUrl     : string             (Firebase Storage URL to ID card)
+    verificationStatus : VerificationStatus (pending/approved/rejected)
+    submittedAt        : string             (ISO date string)
+    reviewedBy?        : string             (Admin UID who reviewed)
+    reviewedAt?        : string             (ISO date of review)
+    rejectionReason?   : string             (Reason if rejected)
+  }
+
+--- Officer (Active, Approved Officers) ---
+  {
+    uid                  : string
+    name                 : string
+    officerId            : string
+    jurisdiction         : { district, state }
+    instrumentCategories : string[]         (What they can inspect)
+    available            : boolean          (Currently accepting assignments)
+    workload             : number           (Current active case count)
+    verificationStatus   : VerificationStatus
+    location?            : { latitude, longitude }
+  }
+
+--- Application ---
+  {
+    id                  : string            (Firestore document ID)
+    ownerId?            : string            (Submitting user's UID)
+    instrumentName      : string            (e.g., "Avery Berkel FX220")
+    instrumentType      : string            (e.g., "Weighing Scale")
+    serialNumber        : string            (Manufacturer serial number)
+    ownerName           : string            (Business/owner name)
+    ownerContact        : string            (Phone number)
+    address             : string            (Installation address)
+    location?           : Location          (Full location with GPS)
+    status              : ApplicationStatus (Current pipeline status)
+    submittedAt         : string            (ISO date string)
+    inspectionResult?   : 'Pass' | 'Fail'
+    remarks?            : string            (Officer's inspection remarks)
+    verifiedBy?         : string            (Officer name who verified)
+    certificateId?      : string            (Issued certificate number)
+    issueDate?          : string            (Certificate issue date)
+    expiryDate?         : string            (Certificate expiry date)
+    assignedOfficerId?  : string            (Auto-allocated officer UID)
+    assignedOfficerName?: string            (Officer display name)
+    assignedAt?         : string            (Allocation timestamp)
+    assignmentStatus?   : 'unassigned' | 'assigned' | 'reassigned'
+  }
+
+
+================================================================================
+6. FIREBASE COLLECTIONS (Database Schema)
+================================================================================
+
+Collection: "users"
+  - Document ID: Firebase Auth UID
+  - Fields: email, name, role ('business' | 'officer' | 'admin'), createdAt
+
+Collection: "applications"
+  - Document ID: Auto-generated
+  - Fields: All fields from the Application interface above
+  - Created when a business submits a new verification request
+  - Updated when an officer approves/rejects/adds remarks
+
+Collection: "officerRegistrations"
+  - Document ID: Firebase Auth UID
+  - Fields: All fields from the OfficerRegistration interface
+  - Created when an officer submits their registration form
+  - Updated when an admin approves or rejects the registration
+
+Collection: "officers"
+  - Document ID: Firebase Auth UID
+  - Fields: All fields from the Officer interface
+  - Created automatically when admin approves an officer registration
+  - Updated when allocation assigns workload
+
+Collection: "auditLogs"
+  - Document ID: Auto-generated
+  - Fields: action, performedBy, targetId, previousValue, newValue,
+            metadata (object), timestamp
+  - Created on every critical action (submit, approve, reject, assign, etc.)
+
+Storage Bucket: "officer-id-cards/"
+  - Stores uploaded officer identification card images
+  - Files named by UID for uniqueness
+  - Access restricted (not publicly accessible)
+
+
+================================================================================
+7. USER ROLES & ACCESS CONTROL
+================================================================================
+
+Role              | Description                         | Access Level
+------------------+-------------------------------------+----------------------------
+business          | Commercial establishment owner       | Submit apps, view certs
+officer           | Verified Legal Metrology Inspector   | Review apps, issue certs
+pending_officer   | Officer awaiting admin approval      | No access (waiting)
+admin             | System administrator                 | Verify officers, dashboard
+null (public)     | Unauthenticated visitor              | Verify certificates only
+
+Role Assignment Rules:
+  - Users who sign up via the Business card get role = 'business'
+  - Users who sign up via the Officer card get role = 'officer' BUT must
+    complete OfficerSignup page and await admin approval
+  - Admin role is set manually in Firestore (cannot be self-assigned)
+  - Login enforces role-portal matching: a business user CANNOT log in
+    through the officer portal and vice versa (throws "Access Denied")
+
+
+================================================================================
+8. AUTHENTICATION FLOW
+================================================================================
+
+Sign Up (Business):
+  1. User fills in email + password on the Business card (LandingPage)
+  2. Firebase Auth creates user account
+  3. Firestore "users" document created with role = 'business'
+  4. User is redirected to /business (BusinessDashboard)
+
+Sign Up (Officer):
+  1. User clicks "Register as Officer" link
+  2. Redirected to /officer-signup (OfficerSignup page)
+  3. Fills detailed form: name, officer ID, department, designation,
+     district, state, and uploads ID card image
+  4. Firebase Auth creates user, Storage stores ID card image
+  5. Firestore "users" doc: role = 'officer', "officerRegistrations" doc created
+  6. User must wait for admin to approve before accessing the system
+
+Login:
+  1. User enters email + password on either card (LandingPage)
+  2. System authenticates with Firebase Auth
+  3. System fetches actual role from Firestore "users" document
+  4. STRICT VALIDATION: If actual role does not match the portal used for
+     login, the system immediately logs them out and shows an error:
+     "Access Denied: This email is registered as a [role]. Please use the
+     correct login portal."
+  5. On success, user is redirected to their role-appropriate dashboard
+
+Logout:
+  - Available from Navbar for all authenticated users
+  - Clears Firebase Auth session and React state
+  - Redirects to Landing Page
+
+
+================================================================================
+9. CORE WORKFLOWS
+================================================================================
+
+9.1 BUSINESS USER WORKFLOW
+--------------------------
+  1. Login/Signup via Business card on Landing Page
+  2. View BusinessDashboard showing all submitted applications with:
+     - Status badges (Pending / Approved / Rejected)
+     - Search and filter functionality
+     - Summary stat cards (pending count, approved count, rejected count)
+  3. Click "New Application" to go to ApplyPage
+  4. Fill the instrument verification form:
+     - Instrument name, type (from statutory categories), serial number
+     - Owner name, contact number
+     - Address, district, state
+     - Pin exact GPS location on interactive Leaflet map
+  5. Form validation enforces real data (readable text checks, valid phone,
+     valid serial number, location pin required)
+  6. On submit:
+     - Application stored in Firestore with status = 'Pending'
+     - Auto-allocation runs to assign the nearest/least-busy officer
+     - Success confirmation page displayed with Application ID and status
+  7. Once approved, click "View Certificate" to see digital certificate
+  8. Download certificate as PDF with embedded QR code
+
+9.2 OFFICER WORKFLOW
+--------------------
+  1. Complete officer registration (OfficerSignup) with ID card upload
+  2. Wait for admin approval
+  3. Once approved, login and see OfficerDashboard:
+     - "My Queue" tab: Assigned applications with review buttons
+     - Interactive GIS map showing all assigned application locations
+     - "Plan Route" button to compute optimal inspection route
+  4. Click "Review" on any application to go to ReviewPage:
+     - View all instrument details, owner info, location on map
+     - Record inspection findings (remarks)
+     - Choose "Approve" (generates certificate) or "Reject" (with reason)
+  5. On approval:
+     - Certificate ID is generated (format: LM-CERT-XXXXXX)
+     - Issue date = today, expiry date = today + reverification months
+     - Application status updated to 'Approved'
+     - Audit log recorded
+     - Toast notification confirms success
+  6. Route Planning:
+     - Uses nearest-neighbor algorithm to plan optimal inspection order
+     - Draws a blue dashed polyline on the map connecting locations
+
+9.3 ADMIN WORKFLOW
+------------------
+  1. Login (admin role is assigned manually in Firestore)
+  2. Navigate to /admin/officer-verification (AdminDashboard)
+  3. Three tabs available:
+
+     Tab 1: VERIFICATION QUEUE
+     - Lists all pending officer registrations
+     - Shows name, officer ID, department, district, submission date
+     - View uploaded ID card image
+     - Approve or Reject each registration
+     - On approve: creates "officers" collection entry, updates user role
+     - On reject: records reason, marks registration as rejected
+
+     Tab 2: OFFICER WORKLOAD
+     - Table of all approved officers
+     - Columns: Name, Officer ID, District, Availability, Workload count
+     - Used for monitoring load distribution
+
+     Tab 3: APPLICATION HEATMAP
+     - Interactive Leaflet map showing all applications as markers
+     - Markers color-coded by status (Pending/Approved/Rejected)
+     - Useful for identifying high-density areas
+
+9.4 PUBLIC VERIFICATION WORKFLOW
+---------------------------------
+  1. Navigate to /verify (no login required)
+  2. Enter a Certificate ID (format: LM-CERT-XXXXXX)
+  3. System looks up the certificate in Firestore
+  4. Displays:
+     - Certificate validity status (VALID / EXPIRED)
+     - Instrument details (name, type, serial number)
+     - Owner and premises information
+     - Issue date and expiry date
+     - Verifying officer name
+     - QR code for sharing
+  5. Also accessible by scanning QR code on physical/digital certificate
+
+
+================================================================================
+10. FEATURE BREAKDOWN BY PAGE
+================================================================================
+
+LandingPage.tsx
+  - Government branding header
+  - Portal title and description
+  - Two role cards (Business / Officer) with integrated login/signup forms
+  - Strict role validation on login (prevents cross-portal login)
+  - Public certificate verification banner with button
+  - Statutory reverification schedule table (from INSTRUMENT_CATEGORIES)
+  - Legal notice with penalty text
+
+BusinessDashboard.tsx
+  - Summary stat cards (Pending / Approved / Rejected counts)
+  - Search bar (searches instrument name, type, serial number, certificate ID)
+  - Status filter dropdown
+  - Applications table with columns:
+    Instrument Name | Type | Serial Number | Submitted Date | Status | Actions
+  - "View Certificate" button for approved applications
+  - "New Application" button
+
+ApplyPage.tsx
+  - Multi-field form with intelligent validation:
+    * looksLikeReadableText() — prevents gibberish
+    * isValidPhone() — ensures 10+ digit phone numbers
+    * isValidSerialNumber() — minimum 4 characters
+  - Instrument category dropdown (from statutory rules)
+  - Interactive GIS map for location pinning
+  - Category-specific rule display (e.g., "24-month reverification cycle")
+  - Legal disclaimer with penalty notice
+  - Submission success confirmation screen with:
+    * Application ID display
+    * Assignment status (officer name or "pending")
+    * "Return to Dashboard" button
+
+OfficerSignup.tsx
+  - Detailed registration form
+  - Fields: Name, Officer ID, Department, Designation, District, State
+  - ID Card image upload (stored in Firebase Storage)
+  - Creates officerRegistrations entry with status = 'pending'
+
+OfficerDashboard.tsx
+  - Two views: "My Queue" and "Map View"
+  - Queue shows assigned applications with Review buttons
+  - Map shows all assigned applications as markers
+  - "Plan Route" button computes nearest-neighbor inspection route
+  - Route drawn as dashed blue polyline on map
+
+ReviewPage.tsx
+  - Full application details display
+  - Instrument info, owner info, address, location on map
+  - Inspection remarks text area
+  - "Approve" button: generates certificate, sets dates, records audit
+  - "Reject" button: records rejection reason, updates status
+
+CertificatePage.tsx
+  - Official certificate display with:
+    * Government branding header
+    * Certificate number banner with validity badge
+    * Instrument particulars section
+    * Owner & premises information section
+    * Statutory dates & officer sign-off section
+    * QR code (links to /verify?id=CERT_ID)
+    * Official seal mockup
+    * Penalty notice footer
+  - "Download as PDF" button:
+    * Generates A4 PDF using jsPDF
+    * Includes all certificate data
+    * Embeds QR code image in PDF
+    * Includes full verification URL
+    * Shows issuing officer name
+
+VerifyPage.tsx
+  - Certificate ID input field
+  - "Verify" button triggers Firestore lookup
+  - Displays full certificate details if found
+  - Shows VALID / EXPIRED status badge
+  - QR code for sharing the verification result
+
+OfficerVerificationPage.tsx (Admin Dashboard)
+  - Tab 1: Pending officer registrations queue
+  - Tab 2: Officer workload monitoring table
+  - Tab 3: Application location heatmap (Leaflet)
+
+
+================================================================================
+11. GIS & MAP INTEGRATION
+================================================================================
+
+Component: src/components/GISMap.tsx
+
+The GISMap is a reusable React component wrapping react-leaflet. It supports:
+
+  Props:
+    - center     : [lat, lng] — map center coordinates
+    - zoom       : number — initial zoom level
+    - markers    : Array of { position, popupText, color? }
+    - selectable : boolean — if true, clicking the map pins a location
+    - onSelect   : callback returning (lat, lng) when user clicks map
+    - route      : Array of [lat, lng] — draws a polyline for route planning
+
+  Used in:
+    - ApplyPage: selectable=true for pinning instrument location
+    - OfficerDashboard: markers for assigned applications + route polyline
+    - OfficerVerificationPage (Admin Heatmap): markers for all applications
+
+  Map tiles are loaded from OpenStreetMap (free, no API key needed).
+
+
+================================================================================
+12. AUTOMATIC OFFICER ALLOCATION ALGORITHM
+================================================================================
+
+File: src/firebase/allocation.ts
+Function: autoAllocateApplication(appId, district, category, appLat, appLng)
+
+Algorithm Steps:
+
+  1. QUERY eligible officers from Firestore:
+     - Same district as the application
+     - verificationStatus = 'approved'
+     - available = true
+
+  2. FILTER by instrument category support
+     (simplified for MVP: all approved officers can handle all categories)
+
+  3. SORT by two criteria:
+     a. PRIMARY: Lowest workload first (officer with fewest active cases)
+     b. TIE-BREAKER: If two officers have equal workload, use Turf.js to
+        calculate geographic distance from each officer's location to the
+        application's location. Closer officer wins.
+
+  4. ASSIGN using Firestore WriteBatch (atomic operation):
+     - Update application: assignedOfficerId, assignedOfficerName, assignedAt
+     - Update officer: workload += 1
+
+  5. AUDIT: Record an 'officer_assigned' audit log entry
+
+  If no eligible officer is found, application gets assignmentStatus = 'unassigned'.
+
+  NOTE: In production, this logic should be moved to a Firebase Cloud Function
+  for security and atomicity guarantees.
+
+
+================================================================================
+13. AUDIT LOGGING SYSTEM
+================================================================================
+
+File: src/firebase/audit.ts
+
+Every critical action in the system is logged to the "auditLogs" Firestore
+collection for accountability and compliance tracking.
+
+Tracked Actions (AuditAction type):
+  - application_submitted
+  - officer_registration_submitted
+  - officer_registration_approved
+  - officer_registration_rejected
+  - officer_assigned
+  - officer_reassigned
+  - inspection_recorded
+  - application_approved
+  - application_rejected
+  - certificate_issued
+  - certificate_revoked
+
+Each Log Entry Contains:
+  - action     : The action type
+  - performedBy: UID of the user who performed the action (or 'system')
+  - targetId   : The document ID affected
+  - previousValue / newValue: Before/after state
+  - metadata   : Additional context (officer name, district, etc.)
+  - timestamp  : ISO date string
+
+Audit logging is non-blocking: if the log write fails, it does not break
+the main operation (logged to console instead).
+
+
+================================================================================
+14. CERTIFICATE GENERATION (QR + PDF)
+================================================================================
+
+Certificate ID Format: LM-CERT-XXXXXX (random 6-character alphanumeric)
+
+On-Screen Certificate (CertificatePage.tsx):
+  - Rendered as a styled HTML/CSS card
+  - Includes QR code via qrcode.react (QRCodeSVG component)
+  - QR encodes the full verification URL: {origin}/verify?id={certificateId}
+  - Shows validity badge: "VALID & AUTHENTIC" or "EXPIRED — Re-verification Required"
+
+PDF Certificate (jsPDF):
+  - A4 portrait format
+  - Decorative blue border
+  - Government header with ministry name
+  - Certificate number in highlighted box
+  - Three sections: Instrument Particulars, Owner Details, Verification Dates
+  - QR code embedded as PNG image (SVG → Canvas → PNG → jsPDF addImage)
+  - Digital authorization block with officer name
+  - Statutory penalty warning text
+  - Footer with verification instructions
+
+Expiry Calculation (legalMetrologyRules.js):
+  - calculateExpiryDate(issueDate, instrumentType)
+  - Looks up reverificationMonths from INSTRUMENT_CATEGORIES
+  - Weighing Scale, Capacity Measure, Length Measure, Beam Scale, Counter: 24 months
+  - Tank Lorry / Other: 12 months
+
+
+================================================================================
+15. SECURITY MEASURES
+================================================================================
+
+  1. ROLE ENFORCEMENT: Each portal card enforces strict role matching.
+     Logging in with a business email on the officer card shows "Access Denied"
+     and immediately logs the user out.
+
+  2. NO SELF-ROLE ESCALATION: Users cannot assign themselves 'admin' or
+     'officer' roles. Officer role requires registration + admin approval.
+     Admin role is only set directly in Firestore by a system administrator.
+
+  3. OFFICER ID CARD PRIVACY: Uploaded officer ID card images are stored in
+     Firebase Storage and only viewable by admins during verification.
+
+  4. ROUTE GUARDS: Dashboard pages check the user's role before rendering.
+     Unauthorized access redirects to the landing page.
+
+  5. FIRESTORE RULES: Should be configured to restrict read/write access
+     based on authenticated user's role (configured in Firebase Console).
+
+  6. AUDIT TRAIL: Every critical action is logged with the performer's UID,
+     timestamp, and details, creating an immutable compliance record.
+
+  7. INPUT VALIDATION: ApplyPage enforces readable text checks, phone number
+     validation, and serial number minimum length to prevent garbage data.
+
+  8. ATOMIC WRITES: Officer allocation uses Firestore WriteBatch to ensure
+     the application assignment and officer workload update happen atomically.
+
+
+================================================================================
+16. LEGAL METROLOGY RULES ENGINE
+================================================================================
+
+File: src/constants/legalMetrologyRules.js
+
+INSTRUMENT_CATEGORIES:
+  ┌─────────────────────────┬──────────────────────────┐
+  │ Category                │ Reverification Period     │
+  ├─────────────────────────┼──────────────────────────┤
+  │ Weighing Scale          │ 24 months                │
+  │ Capacity Measure        │ 24 months                │
+  │ Length Measure / Tape   │ 24 months                │
+  │ Beam Scale              │ 24 months                │
+  │ Counter Machine         │ 24 months                │
+  │ Tank Lorry / Other      │ 12 months                │
+  └─────────────────────────┴──────────────────────────┘
+
+PENALTY_TEXT:
+  "Use of an unverified instrument attracts a fine of Rs. 2,000 to Rs. 10,000
+   under Section 33 of the Legal Metrology Act, 2009."
+
+calculateExpiryDate(issueDate, instrumentType):
+  Returns a Date object that is issueDate + reverificationMonths.
+
+
+================================================================================
+17. ROUTING & NAVIGATION
+================================================================================
+
+Route                          | Page Component            | Access
+-------------------------------+---------------------------+----------
+/                              | LandingPage               | Public
+/business                      | BusinessDashboard         | Business
+/apply                         | ApplyPage                 | Business
+/officer                       | OfficerDashboard          | Officer
+/officer-signup                | OfficerSignup             | Public
+/review/:id                    | ReviewPage                | Officer
+/certificate/:id               | CertificatePage           | Business/Officer
+/verify                        | VerifyPage                | Public
+/admin/officer-verification    | OfficerVerificationPage   | Admin
+*                              | Redirect to /             | -
+
+Navbar Component:
+  - Shows different links based on current role
+  - Business: "Dashboard", "New Application"
+  - Officer: "Dashboard"
+  - Admin: "Admin Dashboard"
+  - Public: "Verify Certificate"
+  - Always shows: "Logout" (if authenticated), "Switch Role" (to landing)
+
+
+================================================================================
+18. DEPENDENCIES & PACKAGES
+================================================================================
+
+Production Dependencies:
+  react, react-dom          — UI framework
+  react-router-dom          — Client-side routing
+  firebase                  — Backend services (Auth, Firestore, Storage)
+  react-leaflet, leaflet    — Interactive maps
+  @turf/turf                — Geospatial calculations (distance, point)
+  jspdf                     — PDF generation
+  qrcode.react              — QR code rendering
+  react-hot-toast           — Toast notifications
+  lucide-react              — Icon library
+  html2canvas               — HTML to canvas (legacy, used for screenshots)
+  dompurify                 — HTML sanitization
+
+Dev Dependencies:
+  typescript                — Type checking
+  vite                      — Build tool & dev server
+  tailwindcss               — Utility CSS framework
+  @types/react, etc.        — TypeScript type definitions
+
+
+================================================================================
+19. HOW TO RUN THE PROJECT
+================================================================================
+
+Prerequisites:
+  - Node.js (v18 or higher)
+  - npm (v9 or higher)
+  - A Firebase project with Authentication, Firestore, and Storage enabled
+
+Setup Steps:
+
+  1. Clone the repository:
+     > git clone <repository-url>
+     > cd legal-metrology-verification-portal
+
+  2. Install dependencies:
+     > npm install
+
+  3. Configure Firebase:
+     - Create a Firebase project at https://console.firebase.google.com
+     - Enable Email/Password authentication
+     - Create a Firestore database
+     - Enable Firebase Storage
+     - Copy your Firebase config to src/firebase/config.js
+
+  4. Start the development server:
+     > npm run dev
+
+  5. Open in browser:
+     > http://localhost:3000
+
+  6. Create an admin user:
+     - Sign up as a regular user
+     - Go to Firebase Console → Firestore → "users" collection
+     - Find your user document and change role from 'business' to 'admin'
+
+  7. Build for production:
+     > npm run build
+     (Output goes to /dist folder)
+
+
+================================================================================
+20. FUTURE ENHANCEMENTS
+================================================================================
+
+  1. Move allocation logic to Firebase Cloud Functions for better security
+  2. Add email/SMS notifications for application status changes
+  3. Implement Firestore Security Rules for production-grade access control
+  4. Add analytics dashboard with charts (applications over time, etc.)
+  5. Support multi-language (Hindi, regional languages)
+  6. Add document/image upload for instruments (photos of the scale/measure)
+  7. Implement role-based Firestore Security Rules
+  8. Add pagination for large application lists
+  9. Progressive Web App (PWA) support for offline field inspections
+  10. Integration with government e-Sign for digital signatures on certificates
+
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================
