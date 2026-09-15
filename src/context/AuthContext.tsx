@@ -23,7 +23,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
         try {
@@ -41,7 +48,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserName('');
       }
       setLoading(false);
-    });
+    },
+      (error) => {
+        console.error('[Tulasetu] Auth state error:', error?.code || error?.message || error);
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, []);

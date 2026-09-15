@@ -16,15 +16,6 @@ import { VerifyPage } from './pages/VerifyPage';
 import { OfficerSignup } from './pages/OfficerSignup';
 import { OfficerVerificationPage } from './pages/admin/OfficerVerificationPage';
 import { Scale } from 'lucide-react';
-import { BusinessDashboard } from './pages/BusinessDashboard';
-import { ApplyPage } from './pages/ApplyPage';
-import { OfficerDashboard } from './pages/OfficerDashboard';
-import { ReviewPage } from './pages/ReviewPage';
-import { CertificatePage } from './pages/CertificatePage';
-import { VerifyPage } from './pages/VerifyPage';
-import { OfficerSignup } from './pages/OfficerSignup';
-import { OfficerVerificationPage } from './pages/admin/OfficerVerificationPage';
-import { Scale } from 'lucide-react';
 
 const LoadingScreen: React.FC = () => (
   <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">

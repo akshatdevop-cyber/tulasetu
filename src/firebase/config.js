@@ -4,22 +4,38 @@ import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
 
-const REQUIRED_ENV = [
-  'VITE_FIREBASE_API_KEY',
-  'VITE_FIREBASE_AUTH_DOMAIN',
-  'VITE_FIREBASE_PROJECT_ID',
-  'VITE_FIREBASE_STORAGE_BUCKET',
-  'VITE_FIREBASE_MESSAGING_SENDER_ID',
-  'VITE_FIREBASE_APP_ID',
-];
+/**
+ * Vite only statically replaces import.meta.env.VITE_* when the key is a
+ * literal identifier. Do not read import.meta.env[dynamicKey] — those values
+ * are undefined in production builds (including Vercel).
+ */
+const firebaseWebConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
 
-function readEnv(name) {
-  const value = import.meta.env[name];
-  return typeof value === 'string' ? value.trim() : '';
+function asNonEmptyString(value) {
+  return typeof value === 'string' && value.trim() ? value.trim() : '';
 }
 
+const ENV_LABELS = {
+  apiKey: 'VITE_FIREBASE_API_KEY',
+  authDomain: 'VITE_FIREBASE_AUTH_DOMAIN',
+  projectId: 'VITE_FIREBASE_PROJECT_ID',
+  storageBucket: 'VITE_FIREBASE_STORAGE_BUCKET',
+  messagingSenderId: 'VITE_FIREBASE_MESSAGING_SENDER_ID',
+  appId: 'VITE_FIREBASE_APP_ID',
+};
+
 export function getMissingFirebaseEnvNames() {
-  return REQUIRED_ENV.filter((name) => !readEnv(name));
+  return Object.entries(ENV_LABELS)
+    .filter(([field]) => !asNonEmptyString(firebaseWebConfig[field]))
+    .map(([, envName]) => envName);
 }
 
 export let db = null;
@@ -35,25 +51,25 @@ const missing = getMissingFirebaseEnvNames();
 if (missing.length > 0) {
   firebaseConfigError =
     `Missing required environment variables: ${missing.join(', ')}. ` +
-    'Add them in Vercel → Project Settings → Environment Variables (then redeploy), or in a local .env file.';
+    'Add them in Vercel → Project Settings → Environment Variables for Production (and Preview), then Redeploy so they are available at build time.';
   console.error('[Tulasetu]', firebaseConfigError);
 } else {
   try {
     const app = initializeApp({
-      apiKey: readEnv('VITE_FIREBASE_API_KEY'),
-      authDomain: readEnv('VITE_FIREBASE_AUTH_DOMAIN'),
-      projectId: readEnv('VITE_FIREBASE_PROJECT_ID'),
-      storageBucket: readEnv('VITE_FIREBASE_STORAGE_BUCKET'),
-      messagingSenderId: readEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
-      appId: readEnv('VITE_FIREBASE_APP_ID'),
-      measurementId: readEnv('VITE_FIREBASE_MEASUREMENT_ID') || undefined,
+      apiKey: asNonEmptyString(firebaseWebConfig.apiKey),
+      authDomain: asNonEmptyString(firebaseWebConfig.authDomain),
+      projectId: asNonEmptyString(firebaseWebConfig.projectId),
+      storageBucket: asNonEmptyString(firebaseWebConfig.storageBucket),
+      messagingSenderId: asNonEmptyString(firebaseWebConfig.messagingSenderId),
+      appId: asNonEmptyString(firebaseWebConfig.appId),
+      measurementId: asNonEmptyString(firebaseWebConfig.measurementId) || undefined,
     });
     db = getFirestore(app);
     auth = getAuth(app);
     storage = getStorage(app);
     firebaseReady = true;
     try {
-      if (typeof window !== 'undefined' && readEnv('VITE_FIREBASE_MEASUREMENT_ID')) {
+      if (typeof window !== 'undefined' && asNonEmptyString(firebaseWebConfig.measurementId)) {
         analytics = getAnalytics(app);
       }
     } catch (analyticsErr) {

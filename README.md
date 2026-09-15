@@ -195,7 +195,9 @@ Officers who should appear in allocation need a document in `officers` (created 
 
 ## Environment-variable setup
 
-Vite only exposes variables prefixed with `VITE_`. Copy `.env.example` to `.env` (never commit `.env`):
+These are **public Firebase web-app values** (the same object Firebase shows in Project settings → Your apps). They are not Admin SDK secrets. Vite **inlines** `import.meta.env.VITE_*` at **build** time — they will not appear at runtime unless they existed when `npm run build` ran.
+
+Copy `.env.example` to `.env` locally:
 
 ```
 VITE_FIREBASE_API_KEY=
@@ -207,7 +209,7 @@ VITE_FIREBASE_APP_ID=
 VITE_FIREBASE_MEASUREMENT_ID=
 ```
 
-`src/firebase/config.js` reads these via `import.meta.env`.
+`VITE_FIREBASE_MEASUREMENT_ID` is optional (Analytics). All others are required. `src/firebase/config.js` reads them as static `import.meta.env.VITE_*` identifiers so they survive production builds.
 
 ## Development command
 
@@ -226,9 +228,16 @@ npm run preview
 
 `npm run lint` runs `tsc --noEmit` (typecheck). There is no separate `typecheck` script.
 
-## Deployment
+## Vercel deployment
 
-This is a static Vite SPA. After `npm run build`, deploy the `dist/` folder to Firebase Hosting, Vercel, Netlify, or any static host. Configure the same `VITE_FIREBASE_*` values in the host’s environment, then rebuild. Restrict the Firebase API key by HTTP referrer in the Google Cloud console.
+1. Import `https://github.com/akshatdevop-cyber/tulasetu`.
+2. Framework Preset: **Vite**. Build: `npm run build`. Output: `dist`. Install: `npm install`.
+3. In **Project Settings → Environment Variables**, add the `VITE_FIREBASE_*` names above. Enable **Production**, **Preview**, and **Development**.
+4. Vercel may warn that `VITE_` variables are exposed to the browser. That is expected: Firebase web `apiKey` / `appId` are client configuration, not private Admin credentials. Do not put service-account JSON or Admin SDK keys here.
+5. After saving variables, **Redeploy** (a new build). Changing env vars without rebuilding leaves the old empty values in the JS bundle.
+6. `vercel.json` only sets SPA rewrites plus the Vite build/output commands. It does not store secrets.
+
+Restrict the web API key by HTTP referrer in Google Cloud once the Vercel domain is known.
 
 ## User Roles & Access
 
