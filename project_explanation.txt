@@ -35,7 +35,7 @@ TABLE OF CONTENTS
 1. PROJECT OVERVIEW
 ================================================================================
 
-Project Name     : Legal Metrology Verification Portal
+Project Name     : Tulasetu
 Hackathon        : Smart India Hackathon 2026
 Problem ID       : SIH26036
 Category         : Government / Regulatory Technology

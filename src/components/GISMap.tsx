@@ -54,7 +54,7 @@ export const GISMap: React.FC<GISMapProps> = ({
   onLocationSelect,
   markers = [],
   selectedLocation = null,
-  className = "h-64 w-full rounded-lg shadow-sm border border-slate-200 z-0",
+  className = "h-64 w-full rounded-xl shadow-sm border border-card-border z-0",
   route,
 }) => {
   return (

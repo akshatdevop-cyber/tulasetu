@@ -182,31 +182,31 @@ export const ApplyPage: React.FC = () => {
 
   if (submittedAppId) {
     return (
-      <div className="min-h-[calc(100vh-100px)] bg-slate-50 py-12 px-4 sm:px-6 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-xs border border-slate-200 p-8 text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
-          <div className="mx-auto w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+      <div className="min-h-[calc(100vh-100px)] bg-cream py-12 px-4 sm:px-6 flex items-center justify-center">
+        <div className="max-w-md w-full bg-card-white rounded-2xl shadow-sm border border-card-border p-8 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-status-success"></div>
+          <div className="mx-auto w-16 h-16 bg-status-success-bg rounded-full flex items-center justify-center mb-6">
+            <CheckCircle2 className="w-8 h-8 text-status-success" strokeWidth={1.5} />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Application Submitted!</h2>
-          <p className="text-sm text-slate-600 mb-6">
-            Your verification request has been successfully recorded in Tulasetu.
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Application Submitted!</h2>
+          <p className="text-sm text-text-muted mb-6">
+            Your verification request has been successfully recorded in TulaSETU.
           </p>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6 text-left">
-            <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider mb-1">Application ID</p>
-            <p className="font-mono text-base font-bold text-blue-700">{submittedAppId}</p>
+          <div className="bg-cream border border-card-border rounded-xl p-4 mb-6 text-left">
+            <p className="text-[10px] text-text-muted uppercase font-bold tracking-[0.15em] mb-1">Application ID</p>
+            <p className="font-mono text-base font-bold text-amber-gold">{submittedAppId}</p>
             
-            <div className="mt-4 pt-4 border-t border-slate-200">
-              <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider mb-1">Status</p>
+            <div className="mt-4 pt-4 border-t border-card-border">
+              <p className="text-[10px] text-text-muted uppercase font-bold tracking-[0.15em] mb-1">Status</p>
               {assignedOfficerName ? (
-                <p className="text-sm text-slate-800">
-                  <span className="inline-block w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+                <p className="text-sm text-text-primary">
+                  <span className="inline-block w-2 h-2 bg-status-success rounded-full mr-2"></span>
                   Assigned to <span className="font-semibold">{assignedOfficerName}</span>
                 </p>
               ) : (
-                <p className="text-sm text-slate-800">
-                  <span className="inline-block w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                <p className="text-sm text-text-primary">
+                  <span className="inline-block w-2 h-2 bg-status-pending rounded-full mr-2"></span>
                   Pending Officer Assignment
                 </p>
               )}
@@ -215,7 +215,7 @@ export const ApplyPage: React.FC = () => {
 
           <button
             onClick={() => navigate('/business')}
-            className="w-full py-3 px-4 bg-blue-700 text-white font-semibold rounded-lg shadow-xs hover:bg-blue-800 transition-colors"
+            className="w-full py-3 px-4 bg-sea-ink text-cream font-semibold rounded-lg shadow-xs hover:bg-sea-teal transition-colors cursor-pointer"
           >
             Return to Dashboard
           </button>
@@ -225,31 +225,26 @@ export const ApplyPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-100px)] bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-100px)] bg-cream py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Breadcrumb / Back button */}
         <div className="flex items-center justify-between">
           <Link
             to="/business"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-text-muted hover:text-text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
             <span>Back to Dashboard</span>
           </Link>
         </div>
 
         {/* Card Header */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800">
-              Form 1 - Verification Request
-            </span>
-            <span className="text-xs text-slate-500">Legal Metrology Act, 2009 (Rule 24)</span>
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 mt-1">
+        <div className="bg-card-white p-6 rounded-2xl border border-card-border shadow-sm">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-text-muted mb-1">Form 1 — Verification Request</p>
+          <h1 className="text-2xl font-bold text-text-primary mt-1">
             Application for Instrument Verification & Stamping
           </h1>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Submit your weight, measure, or weighing/measuring instrument for mandatory government verification and issuance of stamp certificate.
           </p>
 
@@ -257,8 +252,8 @@ export const ApplyPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="mt-6 space-y-5">
             {/* Instrument Name */}
             <div>
-              <label htmlFor="instrumentName" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Instrument Name / Model <span className="text-rose-500">*</span>
+              <label htmlFor="instrumentName" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                Instrument Name / Model <span className="text-pin-red">*</span>
               </label>
               <input
                 id="instrumentName"
@@ -267,23 +262,23 @@ export const ApplyPage: React.FC = () => {
                 value={formData.instrumentName}
                 onChange={handleInputChange}
                 placeholder="e.g. Precision Electronic Tabletop Scale 30kg"
-                className={`w-full px-3.5 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                  errors.instrumentName ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                className={`w-full px-3.5 py-2.5 text-sm border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                  errors.instrumentName ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                 }`}
               />
               {errors.instrumentName && (
-                <p className="text-xs text-rose-600 mt-1">{errors.instrumentName}</p>
+                <p className="text-xs text-status-error mt-1">{errors.instrumentName}</p>
               )}
             </div>
 
             {/* Instrument Type (Dropdown from INSTRUMENT_CATEGORIES keys) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="instrumentType" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                  Instrument Category / Type <span className="text-rose-500">*</span>
+                <label htmlFor="instrumentType" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em]">
+                  Instrument Category / Type <span className="text-pin-red">*</span>
                 </label>
                 {selectedCategoryRules && (
-                  <span className="text-xs text-blue-700 font-medium">
+                  <span className="text-xs text-amber-gold font-bold">
                     Statutory Cycle: {selectedCategoryRules.reverificationMonths} Months validity
                   </span>
                 )}
@@ -293,7 +288,7 @@ export const ApplyPage: React.FC = () => {
                 name="instrumentType"
                 value={formData.instrumentType}
                 onChange={handleInputChange}
-                className="w-full px-3.5 py-2.5 text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-600"
+                className="w-full px-3.5 py-2.5 text-sm border border-card-border rounded-lg bg-card-white focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold"
               >
                 {categoryKeys.map((catKey) => (
                   <option key={catKey} value={catKey}>
@@ -301,15 +296,15 @@ export const ApplyPage: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-text-muted mt-1">
                 Category automatically dictates statutory re-verification intervals pursuant to Legal Metrology General Rules.
               </p>
             </div>
 
             {/* Serial Number */}
             <div>
-              <label htmlFor="serialNumber" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Manufacturer Serial Number <span className="text-rose-500">*</span>
+              <label htmlFor="serialNumber" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                Manufacturer Serial Number <span className="text-pin-red">*</span>
               </label>
               <input
                 id="serialNumber"
@@ -318,20 +313,20 @@ export const ApplyPage: React.FC = () => {
                 value={formData.serialNumber}
                 onChange={handleInputChange}
                 placeholder="e.g. SN-WS-2024-9982"
-                className={`w-full px-3.5 py-2.5 text-sm font-mono border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                  errors.serialNumber ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                className={`w-full px-3.5 py-2.5 text-sm font-mono border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                  errors.serialNumber ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                 }`}
               />
               {errors.serialNumber && (
-                <p className="text-xs text-rose-600 mt-1">{errors.serialNumber}</p>
+                <p className="text-xs text-status-error mt-1">{errors.serialNumber}</p>
               )}
             </div>
 
             {/* Owner Name & Contact Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="ownerName" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Owner / Commercial Entity Name <span className="text-rose-500">*</span>
+                <label htmlFor="ownerName" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                  Owner / Commercial Entity Name <span className="text-pin-red">*</span>
                 </label>
                 <input
                   id="ownerName"
@@ -340,18 +335,18 @@ export const ApplyPage: React.FC = () => {
                   value={formData.ownerName}
                   onChange={handleInputChange}
                   placeholder="e.g. Sharma Grocery Stores"
-                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                    errors.ownerName ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                    errors.ownerName ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                   }`}
                 />
                 {errors.ownerName && (
-                  <p className="text-xs text-rose-600 mt-1">{errors.ownerName}</p>
+                  <p className="text-xs text-status-error mt-1">{errors.ownerName}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="ownerContact" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Contact Mobile / Telephone <span className="text-rose-500">*</span>
+                <label htmlFor="ownerContact" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                  Contact Mobile / Telephone <span className="text-pin-red">*</span>
                 </label>
                 <input
                   id="ownerContact"
@@ -360,20 +355,20 @@ export const ApplyPage: React.FC = () => {
                   value={formData.ownerContact}
                   onChange={handleInputChange}
                   placeholder="e.g. +91 98765 43210"
-                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                    errors.ownerContact ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                    errors.ownerContact ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                   }`}
                 />
                 {errors.ownerContact && (
-                  <p className="text-xs text-rose-600 mt-1">{errors.ownerContact}</p>
+                  <p className="text-xs text-status-error mt-1">{errors.ownerContact}</p>
                 )}
               </div>
             </div>
 
             {/* Address */}
             <div>
-              <label htmlFor="address" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Physical Installation Address / Premises <span className="text-rose-500">*</span>
+              <label htmlFor="address" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                Physical Installation Address / Premises <span className="text-pin-red">*</span>
               </label>
               <textarea
                 id="address"
@@ -382,19 +377,19 @@ export const ApplyPage: React.FC = () => {
                 value={formData.address}
                 onChange={handleInputChange}
                 placeholder="Full address of the shop, trade premise, warehouse, or petrol retail outlet where instrument is used..."
-                className={`w-full px-3.5 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                  errors.address ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                className={`w-full px-3.5 py-2.5 text-sm border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                  errors.address ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                 }`}
               />
               {errors.address && (
-                <p className="text-xs text-rose-600 mt-1">{errors.address}</p>
+                <p className="text-xs text-status-error mt-1">{errors.address}</p>
               )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="district" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  District <span className="text-rose-500">*</span>
+                <label htmlFor="district" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                  District <span className="text-pin-red">*</span>
                 </label>
                 <input
                   id="district"
@@ -403,17 +398,17 @@ export const ApplyPage: React.FC = () => {
                   value={formData.district}
                   onChange={handleInputChange}
                   placeholder="e.g. Kanpur Nagar"
-                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                    errors.district ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                    errors.district ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                   }`}
                 />
                 {errors.district && (
-                  <p className="text-xs text-rose-600 mt-1">{errors.district}</p>
+                  <p className="text-xs text-status-error mt-1">{errors.district}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="state" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                  State <span className="text-rose-500">*</span>
+                <label htmlFor="state" className="block text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-1.5">
+                  State <span className="text-pin-red">*</span>
                 </label>
                 <input
                   id="state"
@@ -422,20 +417,20 @@ export const ApplyPage: React.FC = () => {
                   value={formData.state}
                   onChange={handleInputChange}
                   placeholder="e.g. Uttar Pradesh"
-                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-                    errors.state ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                  className={`w-full px-3.5 py-2.5 text-sm border rounded-lg bg-cream/50 focus:outline-none focus:ring-2 focus:ring-amber-gold/50 focus:border-amber-gold ${
+                    errors.state ? 'border-status-error bg-status-error-bg/30' : 'border-card-border'
                   }`}
                 />
                 {errors.state && (
-                  <p className="text-xs text-rose-600 mt-1">{errors.state}</p>
+                  <p className="text-xs text-status-error mt-1">{errors.state}</p>
                 )}
               </div>
             </div>
 
-            <div className="border border-slate-200 rounded-lg overflow-hidden">
-              <div className="bg-slate-50 p-3 border-b border-slate-200 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-slate-500" />
-                <h3 className="text-sm font-semibold text-slate-700">Select Exact Location on Map</h3>
+            <div className="border border-card-border rounded-xl overflow-hidden">
+              <div className="bg-cream p-3 border-b border-card-border flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-amber-gold" strokeWidth={1.5} />
+                <h3 className="text-sm font-semibold text-text-primary">Select Exact Location on Map</h3>
               </div>
               <GISMap 
                 selectable 
@@ -445,17 +440,17 @@ export const ApplyPage: React.FC = () => {
             </div>
 
             {/* Legal compliance notice */}
-            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2.5 text-xs text-amber-900">
-              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="p-3.5 bg-status-pending-bg border border-status-pending/20 rounded-xl flex items-start gap-2.5 text-xs text-text-primary">
+              <AlertTriangle className="w-4 h-4 text-status-pending shrink-0 mt-0.5" strokeWidth={1.5} />
               <p>{PENALTY_TEXT}</p>
             </div>
 
             {/* Form Actions */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-card-border">
               <button
                 type="button"
                 onClick={() => navigate('/business')}
-                className="px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                className="px-4 py-2.5 text-xs sm:text-sm font-medium text-text-muted hover:bg-cream rounded-lg transition-colors cursor-pointer border border-card-border"
               >
                 Cancel
               </button>
@@ -463,9 +458,9 @@ export const ApplyPage: React.FC = () => {
                 type="submit"
                 id="submit-application-btn"
                 disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-700 hover:bg-blue-800 disabled:bg-blue-400 text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-sea-ink hover:bg-sea-teal disabled:bg-sea-ink/40 text-cream font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition-colors cursor-pointer"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" strokeWidth={1.5} />
                 <span>Submit for Verification</span>
               </button>
             </div>

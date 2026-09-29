@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       setLoading(false);
     },
-      (error) => {
+      (error: any) => {
         console.error('[Tulasetu] Auth state error:', error?.code || error?.message || error);
         setLoading(false);
       }

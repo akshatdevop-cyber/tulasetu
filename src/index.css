@@ -1,1 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&display=swap');
 @import "tailwindcss";
+
+@theme {
+  /* ── TulaSETU Brand Palette ── */
+  --color-sea-ink: #0E2A36;
+  --color-sea-teal: #16485A;
+  --color-amber-gold: #D89A2B;
+  --color-rust: #8A3B1D;
+  --color-deep-brown: #4A1F12;
+  --color-cream: #FBF6EC;
+  --color-card-white: #FFFFFF;
+  --color-card-border: #E9DFCB;
+  --color-text-primary: #1B1B18;
+  --color-text-muted: #6B655A;
+  --color-pin-red: #E5383B;
+  --color-status-success: #2F7D4F;
+  --color-status-success-bg: #ECFDF5;
+  --color-status-pending: #B7791F;
+  --color-status-pending-bg: #FFFBEB;
+  --color-status-error: #B42318;
+  --color-status-error-bg: #FEF2F2;
+
+  /* ── Typography ── */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Global base styles ── */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-cream);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Topographic pattern overlay (used in hero) ── */
+.topo-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.6' opacity='0.07'%3E%3Cellipse cx='200' cy='200' rx='180' ry='120'/%3E%3Cellipse cx='200' cy='200' rx='150' ry='100'/%3E%3Cellipse cx='200' cy='200' rx='120' ry='80'/%3E%3Cellipse cx='200' cy='200' rx='90' ry='60'/%3E%3Cellipse cx='200' cy='200' rx='60' ry='40'/%3E%3Cellipse cx='200' cy='200' rx='30' ry='20'/%3E%3Cellipse cx='80' cy='80' rx='70' ry='50'/%3E%3Cellipse cx='80' cy='80' rx='50' ry='35'/%3E%3Cellipse cx='80' cy='80' rx='30' ry='20'/%3E%3Cellipse cx='320' cy='320' rx='70' ry='50'/%3E%3Cellipse cx='320' cy='320' rx='50' ry='35'/%3E%3Cellipse cx='320' cy='320' rx='30' ry='20'/%3E%3Cellipse cx='340' cy='80' rx='55' ry='40'/%3E%3Cellipse cx='340' cy='80' rx='35' ry='25'/%3E%3Cellipse cx='60' cy='320' rx='55' ry='40'/%3E%3Cellipse cx='60' cy='320' rx='35' ry='25'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 400px 400px;
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-cream); }
+::-webkit-scrollbar-thumb { background: var(--color-card-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ── Selection ── */
+::selection {
+  background-color: #D89A2B33;
+  color: var(--color-sea-ink);
+}
+
+/* ── Focus ring override ── */
+*:focus-visible {
+  outline: 2px solid var(--color-amber-gold);
+  outline-offset: 2px;
+}

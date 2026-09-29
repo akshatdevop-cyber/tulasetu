@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { getApplicationById } from '../firebase/application.js';
+import { getCertificatePublic } from '../firebase/application.js';
 import { Application } from '../types';
 import { PENALTY_TEXT, INSTRUMENT_CATEGORIES } from '../constants/legalMetrologyRules.js';
 import { QRCodeSVG } from 'qrcode.react';
@@ -31,7 +31,7 @@ export const CertificatePage: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    getApplicationById(id).then(app => {
+    getCertificatePublic(id).then(app => {
       if (app) setApplication(app as Application);
       setLoading(false);
     }).catch(err => {
@@ -42,7 +42,7 @@ export const CertificatePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-100px)] bg-slate-50 py-12 px-4 flex items-center justify-center text-slate-500">
+      <div className="min-h-[calc(100vh-100px)] bg-cream py-12 px-4 flex items-center justify-center text-text-muted">
         Loading certificate...
       </div>
     );
@@ -50,18 +50,18 @@ export const CertificatePage: React.FC = () => {
 
   if (!application) {
     return (
-      <div className="min-h-[calc(100vh-100px)] bg-slate-50 py-12 px-4 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl border border-slate-200 text-center max-w-md w-full shadow-xs">
-          <AlertTriangle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-          <h2 className="text-xl font-bold text-slate-900">Certificate Not Found</h2>
-          <p className="text-sm text-slate-600 mt-2">
+      <div className="min-h-[calc(100vh-100px)] bg-cream py-12 px-4 flex items-center justify-center">
+        <div className="bg-card-white p-8 rounded-2xl border border-card-border text-center max-w-md w-full shadow-sm">
+          <AlertTriangle className="w-10 h-10 text-status-error mx-auto mb-3" strokeWidth={1.5} />
+          <h2 className="text-xl font-bold text-text-primary">Certificate Not Found</h2>
+          <p className="text-sm text-text-muted mt-2">
             No application or certificate found for ID "{id}".
           </p>
           <Link
             to={role === 'officer' ? '/officer' : '/business'}
-            className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-blue-700 text-white text-xs font-semibold rounded-lg hover:bg-blue-800 transition-colors"
+            className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-sea-ink text-cream text-xs font-semibold rounded-lg hover:bg-sea-teal transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
             <span>Return to Dashboard</span>
           </Link>
         </div>
@@ -71,19 +71,19 @@ export const CertificatePage: React.FC = () => {
 
   if (application.status !== 'Approved' || !application.certificateId) {
     return (
-      <div className="min-h-[calc(100vh-100px)] bg-slate-50 py-12 px-4 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-xl border border-slate-200 text-center max-w-md w-full shadow-xs">
-          <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-3" />
-          <h2 className="text-xl font-bold text-slate-900">Certificate Not Issued</h2>
-          <p className="text-sm text-slate-600 mt-2">
+      <div className="min-h-[calc(100vh-100px)] bg-cream py-12 px-4 flex items-center justify-center">
+        <div className="bg-card-white p-8 rounded-2xl border border-card-border text-center max-w-md w-full shadow-sm">
+          <AlertTriangle className="w-10 h-10 text-status-pending mx-auto mb-3" strokeWidth={1.5} />
+          <h2 className="text-xl font-bold text-text-primary">Certificate Not Issued</h2>
+          <p className="text-sm text-text-muted mt-2">
             This instrument application is currently in <strong>{application.status}</strong> status.
             A certificate is generated only upon successful verification.
           </p>
           <Link
             to={role === 'officer' ? `/review/${application.id}` : '/business'}
-            className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-blue-700 text-white text-xs font-semibold rounded-lg hover:bg-blue-800 transition-colors"
+            className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-sea-ink text-cream text-xs font-semibold rounded-lg hover:bg-sea-teal transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
             <span>{role === 'officer' ? 'Proceed to Review' : 'Back to Dashboard'}</span>
           </Link>
         </div>
@@ -120,20 +120,20 @@ export const CertificatePage: React.FC = () => {
 
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Outer decorative border
-    doc.setDrawColor(29, 78, 216); // blue-700
+    // Outer decorative border — amber-gold
+    doc.setDrawColor(216, 154, 43); // amber-gold
     doc.setLineWidth(1.5);
     doc.rect(10, 10, pageWidth - 20, 277);
 
     // Inner thin border
-    doc.setDrawColor(203, 213, 225); // slate-300
+    doc.setDrawColor(233, 223, 203); // card-border
     doc.setLineWidth(0.4);
     doc.rect(13, 13, pageWidth - 26, 271);
 
     // Top Header
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(71, 85, 105);
+    doc.setTextColor(14, 42, 54); // sea-ink
     doc.text('GOVERNMENT OF INDIA', pageWidth / 2, 22, { align: 'center' });
 
     doc.setFontSize(10);
@@ -148,31 +148,31 @@ export const CertificatePage: React.FC = () => {
     });
 
     // Divider
-    doc.setDrawColor(29, 78, 216);
+    doc.setDrawColor(216, 154, 43); // amber-gold
     doc.setLineWidth(0.8);
     doc.line(20, 37, pageWidth - 20, 37);
 
     // Certificate Title
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setTextColor(14, 42, 54); // sea-ink
     doc.text('CERTIFICATE OF VERIFICATION', pageWidth / 2, 47, { align: 'center' });
 
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(107, 101, 90); // text-muted
     doc.text('[Under Section 24 of the Legal Metrology Act, 2009 & Rule 24 of General Rules]', pageWidth / 2, 53, {
       align: 'center',
     });
 
     // Certificate Number Box
-    doc.setFillColor(241, 245, 249); // slate-100
-    doc.setDrawColor(203, 213, 225);
+    doc.setFillColor(251, 246, 236); // cream
+    doc.setDrawColor(233, 223, 203);
     doc.roundedRect(20, 58, pageWidth - 40, 15, 2, 2, 'FD');
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(29, 78, 216);
+    doc.setTextColor(216, 154, 43); // amber-gold
     doc.text(`CERTIFICATE NUMBER: ${application.certificateId}`, pageWidth / 2, 67, {
       align: 'center',
     });
@@ -185,12 +185,12 @@ export const CertificatePage: React.FC = () => {
     const printRow = (label: string, value: string, isHighlight = false) => {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(10);
-      doc.setTextColor(71, 85, 105);
+      doc.setTextColor(107, 101, 90);
       doc.text(label, leftCol, currentY);
 
       doc.setFont('helvetica', isHighlight ? 'bold' : 'normal');
       doc.setFontSize(10);
-      doc.setTextColor(isHighlight ? 29 : 15, isHighlight ? 78 : 23, isHighlight ? 216 : 42);
+      doc.setTextColor(isHighlight ? 14 : 27, isHighlight ? 42 : 27, isHighlight ? 54 : 24);
       doc.text(value, valCol, currentY, { maxWidth: pageWidth - valCol - 25 });
 
       currentY += 9;
@@ -198,7 +198,7 @@ export const CertificatePage: React.FC = () => {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(14, 42, 54);
     doc.text('1. INSTRUMENT PARTICULARS', leftCol, currentY);
     currentY += 7;
 
@@ -209,7 +209,7 @@ export const CertificatePage: React.FC = () => {
     currentY += 4;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(14, 42, 54);
     doc.text('2. OWNER & PREMISES DETAILS', leftCol, currentY);
     currentY += 7;
 
@@ -220,7 +220,7 @@ export const CertificatePage: React.FC = () => {
     currentY += 4;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(11);
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(14, 42, 54);
     doc.text('3. VERIFICATION & VALIDITY TIMEFRAME', leftCol, currentY);
     currentY += 7;
 
@@ -231,18 +231,18 @@ export const CertificatePage: React.FC = () => {
 
     // Bottom QR Code Note & Stamping Box
     currentY += 10;
-    doc.setDrawColor(226, 232, 240);
-    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(233, 223, 203);
+    doc.setFillColor(251, 246, 236);
     doc.roundedRect(20, currentY, pageWidth - 40, 46, 2, 2, 'FD');
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-    doc.setTextColor(30, 41, 59);
+    doc.setTextColor(14, 42, 54);
     doc.text('DIGITAL STAMP & VERIFICATION SUMMARY', 25, currentY + 8);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
-    doc.setTextColor(71, 85, 105);
+    doc.setTextColor(107, 101, 90);
     doc.text(`Electronic Verification Token: ${application.certificateId}`, 25, currentY + 15);
     doc.text(`Status: ${isExpired ? 'EXPIRED (Re-verification overdue)' : 'VALID & CERTIFIED'}`, 25, currentY + 21);
     doc.text(`Public Online Verification: ${verificationUrl}`, 25, currentY + 27);
@@ -280,7 +280,7 @@ export const CertificatePage: React.FC = () => {
     // Signature Placeholder
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(9);
-    doc.setTextColor(15, 23, 42);
+    doc.setTextColor(14, 42, 54);
     doc.text('DIGITALLY AUTHORIZED BY', pageWidth - 80, currentY + 40);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
@@ -289,12 +289,12 @@ export const CertificatePage: React.FC = () => {
     // Statutory Penalty Text at bottom
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
-    doc.setTextColor(180, 83, 9); // amber-700
+    doc.setTextColor(138, 59, 29); // rust
     doc.text('STATUTORY WARNING:', 20, 260);
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
-    doc.setTextColor(100, 116, 139);
+    doc.setTextColor(107, 101, 90);
     doc.text(PENALTY_TEXT, 20, 265, { maxWidth: pageWidth - 40 });
 
     doc.setFontSize(7);
@@ -311,33 +311,33 @@ export const CertificatePage: React.FC = () => {
   const verificationUrl = `${window.location.origin}/verify?id=${application.certificateId}`;
 
   return (
-    <div className="min-h-[calc(100vh-100px)] bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-100px)] bg-cream py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Navigation & Action Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <Link
             to={role === 'officer' ? '/officer' : '/business'}
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-text-muted hover:text-text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
             <span>{role === 'officer' ? 'Back to Officer Queue' : 'Back to Dashboard'}</span>
           </Link>
 
           <div className="flex items-center gap-2">
             <Link
               to={`/verify?id=${application.certificateId}`}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-medium shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-card-white border border-card-border hover:bg-cream text-text-primary text-xs sm:text-sm font-medium shadow-xs transition-colors"
             >
-              <ExternalLink className="w-4 h-4 text-blue-600" />
+              <ExternalLink className="w-4 h-4 text-amber-gold" strokeWidth={1.5} />
               <span>Verify Online</span>
             </Link>
 
             <button
               id="download-pdf-btn"
               onClick={handleDownloadPDF}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sea-ink hover:bg-sea-teal text-cream text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-4 h-4" strokeWidth={1.5} />
               <span>Download as PDF</span>
             </button>
           </div>
@@ -346,52 +346,53 @@ export const CertificatePage: React.FC = () => {
         {/* Certificate Card Style UI */}
         <div
           ref={certificateCardRef}
-          className="bg-white rounded-xl border-2 border-blue-900 shadow-md p-6 sm:p-10 relative overflow-hidden"
+          className="bg-card-white rounded-2xl border border-amber-gold shadow-md p-6 sm:p-10 relative overflow-hidden"
+          style={{ boxShadow: 'inset 0 0 0 3px #FBF6EC, inset 0 0 0 4px #D89A2B' }}
         >
           {/* Subtle watermark background */}
           <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-            <Scale className="w-96 h-96 text-slate-900" />
+            <Scale className="w-96 h-96 text-sea-ink" />
           </div>
 
           {/* National Emblem & Header */}
-          <div className="text-center border-b-2 border-slate-200 pb-6">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 border border-blue-200 text-blue-800 mb-2">
-              <Scale className="w-6 h-6" />
+          <div className="text-center border-b-2 border-card-border pb-6">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-amber-gold/10 border border-amber-gold/30 text-amber-gold mb-2">
+              <Scale className="w-6 h-6" strokeWidth={1.5} />
             </div>
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">
-              Tulasetu
+            <p className="text-xs font-bold text-amber-gold uppercase tracking-widest">
+              TulaSETU
             </p>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-text-muted font-medium">
               Government of India • Ministry of Consumer Affairs, Food & Public Distribution
             </p>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary mt-2 tracking-tight">
               Certificate of Verification
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5 italic">
+            <p className="text-xs text-text-muted mt-0.5 italic">
               [Issued pursuant to Section 24 of the Legal Metrology Act, 2009 & Rule 24 of General Rules, 2011]
             </p>
           </div>
 
           {/* Certificate ID Banner & Status Badge */}
-          <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="mt-6 bg-cream border border-card-border rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div>
-              <span className="text-xs text-slate-500 uppercase tracking-wider block">
+              <span className="text-[10px] text-text-muted uppercase tracking-[0.15em] font-bold block">
                 Official Certificate Number
               </span>
-              <span className="text-lg font-mono font-bold text-blue-700">
+              <span className="text-lg font-mono font-bold text-amber-gold">
                 {application.certificateId}
               </span>
             </div>
 
             <div className="flex items-center gap-2">
               {isExpired ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                  <AlertTriangle className="w-3.5 h-3.5 text-amber-700" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-status-pending-bg text-status-pending border border-status-pending/30">
+                  <span className="w-2 h-2 rounded-full bg-status-pending"></span>
                   <span>EXPIRED — Re-verification Required</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-status-success-bg text-status-success border border-status-success/30">
+                  <span className="w-2 h-2 rounded-full bg-status-success"></span>
                   <span>VALID & AUTHENTIC</span>
                 </span>
               )}
@@ -404,52 +405,52 @@ export const CertificatePage: React.FC = () => {
             <div className="md:col-span-2 space-y-6">
               {/* Instrument Details */}
               <div>
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 pb-1.5 mb-3 flex items-center gap-1.5">
-                  <Scale className="w-3.5 h-3.5 text-blue-600" />
+                <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] border-b border-card-border pb-1.5 mb-3 flex items-center gap-1.5">
+                  <Scale className="w-3.5 h-3.5 text-amber-gold" strokeWidth={1.5} />
                   <span>Instrument Particulars</span>
                 </h3>
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-xs sm:text-sm">
                   <div>
-                    <dt className="text-slate-500 text-xs">Instrument Name</dt>
-                    <dd className="font-semibold text-slate-900 mt-0.5">{application.instrumentName}</dd>
+                    <dt className="text-text-muted text-xs">Instrument Name</dt>
+                    <dd className="font-semibold text-text-primary mt-0.5">{application.instrumentName}</dd>
                   </div>
                   <div>
-                    <dt className="text-slate-500 text-xs">Category & Rule</dt>
-                    <dd className="font-semibold text-slate-900 mt-0.5">
+                    <dt className="text-text-muted text-xs">Category & Rule</dt>
+                    <dd className="font-semibold text-text-primary mt-0.5">
                       {application.instrumentType} ({cycleMonths}M cycle)
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-slate-500 text-xs">Manufacturer Serial No.</dt>
-                    <dd className="font-mono font-semibold text-slate-800 mt-0.5">
+                    <dt className="text-text-muted text-xs">Manufacturer Serial No.</dt>
+                    <dd className="font-mono font-semibold text-text-primary mt-0.5">
                       {application.serialNumber}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-slate-500 text-xs">Application Reference</dt>
-                    <dd className="font-mono text-slate-600 mt-0.5">{application.id}</dd>
+                    <dt className="text-text-muted text-xs">Application Reference</dt>
+                    <dd className="font-mono text-text-muted mt-0.5">{application.id}</dd>
                   </div>
                 </dl>
               </div>
 
               {/* Owner Details */}
               <div>
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100 pb-1.5 mb-3 flex items-center gap-1.5">
-                  <Building className="w-3.5 h-3.5 text-blue-600" />
+                <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] border-b border-card-border pb-1.5 mb-3 flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-amber-gold" strokeWidth={1.5} />
                   <span>Owner & Premises Information</span>
                 </h3>
                 <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 text-xs sm:text-sm">
                   <div>
-                    <dt className="text-slate-500 text-xs">Owner / Establishment</dt>
-                    <dd className="font-semibold text-slate-900 mt-0.5">{application.ownerName}</dd>
+                    <dt className="text-text-muted text-xs">Owner / Establishment</dt>
+                    <dd className="font-semibold text-text-primary mt-0.5">{application.ownerName}</dd>
                   </div>
                   <div>
-                    <dt className="text-slate-500 text-xs">Contact Information</dt>
-                    <dd className="text-slate-800 mt-0.5">{application.ownerContact}</dd>
+                    <dt className="text-text-muted text-xs">Contact Information</dt>
+                    <dd className="text-text-primary mt-0.5">{application.ownerContact}</dd>
                   </div>
                   <div className="sm:col-span-2">
-                    <dt className="text-slate-500 text-xs">Physical Premises Address</dt>
-                    <dd className="text-slate-800 mt-0.5 text-xs leading-relaxed">
+                    <dt className="text-text-muted text-xs">Physical Premises Address</dt>
+                    <dd className="text-text-primary mt-0.5 text-xs leading-relaxed">
                       {application.address}
                     </dd>
                   </div>
@@ -457,32 +458,32 @@ export const CertificatePage: React.FC = () => {
               </div>
 
               {/* Verification & Validity Dates */}
-              <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                  <Award className="w-3.5 h-3.5 text-blue-600" />
+              <div className="bg-cream p-4 rounded-xl border border-card-border">
+                <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-3 flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-amber-gold" strokeWidth={1.5} />
                   <span>Statutory Dates & Officer Sign-off</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
                   <div>
-                    <span className="text-slate-500 block text-xs">Issue Date:</span>
-                    <span className="font-semibold text-slate-900">{issueDateFormatted}</span>
+                    <span className="text-text-muted block text-xs">Issue Date:</span>
+                    <span className="font-semibold text-text-primary">{issueDateFormatted}</span>
                   </div>
 
                   <div>
-                    <span className="text-slate-500 block text-xs">Valid Until (Expiry Date):</span>
-                    <span className="font-bold text-blue-800 text-base block">
+                    <span className="text-text-muted block text-xs">Valid Until (Expiry Date):</span>
+                    <span className="font-bold text-sea-ink text-base block">
                       {expiryDateFormatted}
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-text-muted">
                       (Calculated according to {cycleMonths}-month reverification rule)
                     </span>
                   </div>
 
-                  <div className="sm:col-span-2 border-t border-slate-200 pt-3">
-                    <span className="text-slate-500 block text-xs">Verified By:</span>
-                    <span className="font-semibold text-slate-900">{application.verifiedBy}</span>
+                  <div className="sm:col-span-2 border-t border-card-border pt-3">
+                    <span className="text-text-muted block text-xs">Verified By:</span>
+                    <span className="font-semibold text-text-primary">{application.verifiedBy}</span>
                     {application.remarks && (
-                      <p className="text-xs text-slate-600 mt-1 italic bg-white p-2 rounded border border-slate-200">
+                      <p className="text-xs text-text-muted mt-1 italic bg-card-white p-2 rounded-lg border border-card-border">
                         "{application.remarks}"
                       </p>
                     )}
@@ -492,10 +493,10 @@ export const CertificatePage: React.FC = () => {
             </div>
 
             {/* Right Column: QR Code & Stamping Seal */}
-            <div className="flex flex-col items-center justify-between border-t md:border-t-0 md:border-l border-slate-200 pt-6 md:pt-0 md:pl-8">
+            <div className="flex flex-col items-center justify-between border-t md:border-t-0 md:border-l border-card-border pt-6 md:pt-0 md:pl-8">
               {/* QR Code */}
               <div className="text-center w-full">
-                <div className="p-3 bg-white border border-slate-300 rounded-lg inline-block shadow-xs">
+                <div className="p-3 bg-card-white border border-card-border rounded-xl inline-block shadow-xs">
                   <QRCodeSVG
                     id="certificate-qr-code"
                     value={verificationUrl}
@@ -504,32 +505,32 @@ export const CertificatePage: React.FC = () => {
                     includeMargin={false}
                   />
                 </div>
-                <p className="text-[11px] font-mono text-slate-600 font-semibold mt-2">
+                <p className="text-[11px] font-mono text-text-muted font-semibold mt-2">
                   {application.certificateId}
                 </p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
+                <p className="text-[11px] text-text-muted mt-0.5">
                   Scan QR code to verify validity instantly
                 </p>
               </div>
 
-              {/* Official Seal */}
-              <div className="mt-6 p-4 rounded-full border-2 border-dashed border-blue-600 text-center w-36 h-36 flex flex-col items-center justify-center bg-blue-50/50">
-                <Scale className="w-5 h-5 text-blue-700 mb-0.5" />
-                <span className="text-[10px] font-black uppercase text-blue-900 tracking-wider">
+              {/* Official Seal — green verified */}
+              <div className="mt-6 p-4 rounded-full border-2 border-dashed border-status-success text-center w-36 h-36 flex flex-col items-center justify-center bg-status-success-bg">
+                <Scale className="w-5 h-5 text-status-success mb-0.5" strokeWidth={1.5} />
+                <span className="text-[10px] font-black uppercase text-status-success tracking-wider">
                   LEGAL METROLOGY
                 </span>
-                <span className="text-[9px] font-bold text-blue-700">STAMPED & VERIFIED</span>
-                <span className="text-[8px] font-mono text-slate-600 mt-0.5">GOVT. OF INDIA</span>
+                <span className="text-[9px] font-bold text-status-success">STAMPED & VERIFIED</span>
+                <span className="text-[8px] font-mono text-text-muted mt-0.5">GOVT. OF INDIA</span>
               </div>
             </div>
           </div>
 
           {/* Legal Footer (PENALTY_TEXT) */}
-          <div className="mt-8 pt-4 border-t border-slate-200 text-center">
-            <p className="text-[11px] sm:text-xs text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+          <div className="mt-8 pt-4 border-t border-card-border text-center">
+            <p className="text-[11px] sm:text-xs text-text-muted font-medium leading-relaxed max-w-2xl mx-auto">
               {PENALTY_TEXT}
             </p>
-            <p className="text-[10px] text-slate-400 mt-1">
+            <p className="text-[10px] text-text-muted/60 mt-1">
               Statutory verification certificate generated pursuant to Legal Metrology General Rules, 2011.
             </p>
           </div>

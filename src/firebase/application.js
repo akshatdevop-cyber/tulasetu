@@ -164,11 +164,14 @@ export async function approveApplication(appId, instrumentType, officerName, rem
     instrumentType: applicationDoc.instrumentType,
     serialNumber: applicationDoc.serialNumber,
     ownerName: applicationDoc.ownerName,
+    ownerContact: applicationDoc.ownerContact || '',
     address: applicationDoc.address,
+    location: applicationDoc.location || null,
     issueDate,
     expiryDate,
     status: 'Approved',
-    verifiedBy: officerName.trim()
+    verifiedBy: officerName.trim(),
+    remarks: remarks.trim()
   });
 
   await batch.commit();
@@ -218,4 +221,60 @@ export async function verifyCertificate(certificateId) {
   const certDoc = await getDoc(doc(db, 'certificates', clean));
   if (!certDoc.exists()) return null;
   return { id: certDoc.id, ...certDoc.data() };
+}
+
+/**
+ * Fetch a certificate from the public 'certificates' collection by certificate ID.
+ * Falls back to the 'applications' collection if the certificate ID looks like
+ * an application doc ID (auto-generated Firestore ID, no "CERT-" prefix).
+ * This function is designed for unauthenticated / public access.
+ * @param {string} idOrCertId - Either a certificate ID ("CERT-LM...") or an application doc ID
+ * @returns {Promise<object | null>}
+ */
+export async function getCertificatePublic(idOrCertId) {
+  if (!db) throw new Error('Firebase is not configured.');
+
+  // 1. Try direct lookup in 'certificates' collection (exact match)
+  try {
+    const certSnap = await getDoc(doc(db, 'certificates', idOrCertId));
+    if (certSnap.exists()) {
+      return { id: certSnap.id, ...certSnap.data() };
+    }
+  } catch (e) {
+    // Document ID may be invalid for Firestore, continue to fallback
+  }
+
+  // 2. Try uppercase version (CERT-LM... format)
+  try {
+    const upper = idOrCertId.trim().toUpperCase();
+    if (upper !== idOrCertId) {
+      const certSnap = await getDoc(doc(db, 'certificates', upper));
+      if (certSnap.exists()) {
+        return { id: certSnap.id, ...certSnap.data() };
+      }
+    }
+  } catch (e) { /* continue */ }
+
+  // 3. Fallback: try 'applications' collection by doc ID
+  try {
+    const appSnap = await getDoc(doc(db, 'applications', idOrCertId));
+    if (appSnap.exists()) {
+      return { id: appSnap.id, ...appSnap.data() };
+    }
+  } catch (e) { /* continue */ }
+
+  // 4. Fallback: query 'certificates' by applicationId field
+  try {
+    const q = query(
+      collection(db, 'certificates'),
+      where('applicationId', '==', idOrCertId)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const d = snap.docs[0];
+      return { id: d.id, ...d.data() };
+    }
+  } catch (e) { /* continue */ }
+
+  return null;
 }

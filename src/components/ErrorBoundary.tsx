@@ -27,17 +27,17 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-          <div className="max-w-lg w-full bg-white border border-slate-200 rounded-xl shadow-sm p-8 text-center">
-            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle className="w-6 h-6" />
+        <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+          <div className="max-w-lg w-full bg-card-white border border-card-border rounded-2xl shadow-sm p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-status-error-bg text-status-error flex items-center justify-center mx-auto mb-4">
+              <AlertTriangle className="w-6 h-6" strokeWidth={1.5} />
             </div>
-            <h1 className="text-xl font-bold text-slate-900">Something went wrong</h1>
-            <p className="mt-2 text-sm text-slate-600">{this.state.message}</p>
+            <h1 className="text-xl font-bold text-text-primary">Something went wrong</h1>
+            <p className="mt-2 text-sm text-text-muted">{this.state.message}</p>
             <button
               type="button"
               onClick={() => window.location.assign('/')}
-              className="mt-6 px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold"
+              className="mt-6 px-4 py-2 rounded-lg bg-sea-ink hover:bg-sea-teal text-cream text-sm font-semibold transition-colors cursor-pointer"
             >
               Return to home
             </button>
@@ -46,6 +46,6 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    return this.props.children;
+    return (this as any).props.children;
   }
 }

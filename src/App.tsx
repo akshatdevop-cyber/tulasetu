@@ -18,11 +18,11 @@ import { OfficerVerificationPage } from './pages/admin/OfficerVerificationPage';
 import { Scale } from 'lucide-react';
 
 const LoadingScreen: React.FC = () => (
-  <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
-    <div className="w-14 h-14 rounded-xl bg-blue-700 text-white flex items-center justify-center shadow-md mb-4 animate-pulse">
+  <div className="min-h-screen bg-cream flex flex-col items-center justify-center">
+    <div className="w-14 h-14 rounded-2xl bg-sea-ink text-amber-gold flex items-center justify-center shadow-md mb-4 animate-pulse">
       <Scale className="w-8 h-8" />
     </div>
-    <p className="text-sm text-slate-600 font-medium">Loading portal...</p>
+    <p className="text-sm text-text-muted font-medium">Loading portal...</p>
   </div>
 );
 
@@ -34,7 +34,7 @@ const AppRoutes: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 antialiased selection:bg-blue-200">
+    <div className="min-h-screen bg-cream flex flex-col font-sans text-text-primary antialiased">
       <Navbar />
       <div className="flex-1">
         <Routes>

@@ -72,12 +72,12 @@ export const OfficerVerificationPage: React.FC = () => {
   };
 
   if (role !== 'admin') {
-    return <div className="p-8 text-center text-red-600">Access Denied: Administrators only.</div>;
+    return <div className="p-8 text-center text-status-error font-semibold">Access Denied: Administrators only.</div>;
   }
 
   if (loading) return (
-    <div className="p-12 text-center text-slate-500 flex items-center justify-center gap-3">
-      <Loader2 className="w-6 h-6 animate-spin" />
+    <div className="p-12 text-center text-text-muted flex items-center justify-center gap-3">
+      <Loader2 className="w-6 h-6 animate-spin text-amber-gold" />
       <span>Loading Admin Dashboard...</span>
     </div>
   );
@@ -101,34 +101,34 @@ export const OfficerVerificationPage: React.FC = () => {
     });
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10 px-4">
+    <div className="min-h-screen bg-cream py-10 px-4">
       <div className="max-w-6xl mx-auto space-y-6">
         
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <LayoutDashboard className="w-8 h-8 text-blue-700" />
-          <h1 className="text-2xl font-bold text-slate-900">Administrator Dashboard</h1>
+          <LayoutDashboard className="w-8 h-8 text-amber-gold" strokeWidth={1.5} />
+          <h1 className="text-2xl font-bold text-text-primary">Administrator Dashboard</h1>
         </div>
 
         {/* Tabs */}
-        <div className="flex bg-white rounded-lg border border-slate-200 shadow-sm p-1 gap-1 mb-6">
+        <div className="flex bg-card-white rounded-xl border border-card-border shadow-sm p-1 gap-1 mb-6">
           <button 
             onClick={() => setActiveTab('queue')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold flex justify-center items-center gap-2 transition-colors ${activeTab === 'queue' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'text-slate-600 hover:bg-slate-100'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold flex justify-center items-center gap-2 transition-colors cursor-pointer ${activeTab === 'queue' ? 'bg-sea-ink text-cream' : 'text-text-muted hover:bg-cream'}`}
           >
-            <ShieldAlert className="w-4 h-4" /> Verification Queue ({registrations.length})
+            <ShieldAlert className="w-4 h-4" strokeWidth={1.5} /> Verification Queue ({registrations.length})
           </button>
           <button 
             onClick={() => setActiveTab('workload')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold flex justify-center items-center gap-2 transition-colors ${activeTab === 'workload' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'text-slate-600 hover:bg-slate-100'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold flex justify-center items-center gap-2 transition-colors cursor-pointer ${activeTab === 'workload' ? 'bg-sea-ink text-cream' : 'text-text-muted hover:bg-cream'}`}
           >
-            <Users className="w-4 h-4" /> Officer Workload
+            <Users className="w-4 h-4" strokeWidth={1.5} /> Officer Workload
           </button>
           <button 
             onClick={() => setActiveTab('heatmap')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold flex justify-center items-center gap-2 transition-colors ${activeTab === 'heatmap' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'text-slate-600 hover:bg-slate-100'}`}
+            className={`flex-1 py-2 px-4 rounded-lg text-sm font-semibold flex justify-center items-center gap-2 transition-colors cursor-pointer ${activeTab === 'heatmap' ? 'bg-sea-ink text-cream' : 'text-text-muted hover:bg-cream'}`}
           >
-            <MapIcon className="w-4 h-4" /> Application Heatmap
+            <MapIcon className="w-4 h-4" strokeWidth={1.5} /> Application Heatmap
           </button>
         </div>
 
@@ -136,32 +136,32 @@ export const OfficerVerificationPage: React.FC = () => {
         {activeTab === 'queue' && (
           <div>
             {registrations.length === 0 ? (
-              <div className="bg-white p-10 text-center rounded-xl border border-slate-200">
-                <UserSearch className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-600">No pending officer registrations.</p>
+              <div className="bg-card-white p-10 text-center rounded-2xl border border-card-border">
+                <UserSearch className="w-12 h-12 text-card-border mx-auto mb-3" strokeWidth={1.5} />
+                <p className="text-text-muted">No pending officer registrations.</p>
               </div>
             ) : (
               registrations.map(reg => (
-                <div key={reg.uid} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6 mb-4">
+                <div key={reg.uid} className="bg-card-white p-6 rounded-2xl border border-card-border shadow-sm flex flex-col md:flex-row gap-6 mb-4">
                   <div className="flex-1 space-y-3">
-                    <h3 className="text-lg font-bold text-slate-900">{reg.name} <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded ml-2">ID: {reg.officerId}</span></h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
-                      <p><strong>Email:</strong> {reg.email}</p>
-                      <p><strong>Department:</strong> {reg.department}</p>
-                      <p><strong>Designation:</strong> {reg.designation}</p>
-                      <p><strong>Jurisdiction:</strong> {reg.district}, {reg.state}</p>
+                    <h3 className="text-lg font-bold text-text-primary">{reg.name} <span className="text-xs font-normal text-text-muted bg-cream px-2 py-1 rounded-lg ml-2 border border-card-border">ID: {reg.officerId}</span></h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm text-text-muted">
+                      <p><strong className="text-text-primary">Email:</strong> {reg.email}</p>
+                      <p><strong className="text-text-primary">Department:</strong> {reg.department}</p>
+                      <p><strong className="text-text-primary">Designation:</strong> {reg.designation}</p>
+                      <p><strong className="text-text-primary">Jurisdiction:</strong> {reg.district}, {reg.state}</p>
                     </div>
                   </div>
                   <div className="w-48 shrink-0">
-                    <p className="text-xs font-semibold text-slate-500 mb-2">Submitted ID Card</p>
-                    <img src={reg.idCardImageUrl} alt="ID Card" className="w-full h-auto rounded border border-slate-300 shadow-sm" />
+                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.15em] mb-2">Submitted ID Card</p>
+                    <img src={reg.idCardImageUrl} alt="ID Card" className="w-full h-auto rounded-xl border border-card-border shadow-sm" />
                   </div>
-                  <div className="flex flex-col gap-3 justify-center shrink-0 border-l border-slate-100 pl-6">
-                    <button onClick={() => handleApprove(reg.uid)} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-semibold text-sm flex items-center gap-2">
-                      <Check className="w-4 h-4" /> Approve
+                  <div className="flex flex-col gap-3 justify-center shrink-0 border-l border-card-border pl-6">
+                    <button onClick={() => handleApprove(reg.uid)} className="px-4 py-2 bg-status-success hover:bg-status-success/90 text-white rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors cursor-pointer">
+                      <Check className="w-4 h-4" strokeWidth={1.5} /> Approve
                     </button>
-                    <button onClick={() => handleReject(reg.uid)} className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded font-semibold text-sm flex items-center gap-2">
-                      <X className="w-4 h-4" /> Reject
+                    <button onClick={() => handleReject(reg.uid)} className="px-4 py-2 bg-status-error hover:bg-status-error/90 text-white rounded-lg font-semibold text-sm flex items-center gap-2 transition-colors cursor-pointer">
+                      <X className="w-4 h-4" strokeWidth={1.5} /> Reject
                     </button>
                   </div>
                 </div>
@@ -172,9 +172,9 @@ export const OfficerVerificationPage: React.FC = () => {
 
         {/* Tab: Workload */}
         {activeTab === 'workload' && (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-card-white rounded-2xl border border-card-border shadow-sm overflow-hidden">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+              <thead className="bg-cream border-b border-card-border text-text-muted text-[11px] uppercase tracking-[0.1em] font-semibold">
                 <tr>
                   <th className="py-3 px-4">Officer Name</th>
                   <th className="py-3 px-4">ID / Department</th>
@@ -183,29 +183,35 @@ export const OfficerVerificationPage: React.FC = () => {
                   <th className="py-3 px-4 text-center">Current Workload</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-card-border/50">
                 {officers.map(off => (
-                  <tr key={off.uid} className="hover:bg-slate-50">
-                    <td className="py-3 px-4 font-medium text-slate-900">{off.name}</td>
-                    <td className="py-3 px-4 text-slate-600">
+                  <tr key={off.uid} className="hover:bg-cream/50 transition-colors">
+                    <td className="py-3 px-4 font-medium text-text-primary">{off.name}</td>
+                    <td className="py-3 px-4 text-text-muted">
                       <div>{off.officerId}</div>
                     </td>
-                    <td className="py-3 px-4 text-slate-600">{off.jurisdiction?.district || 'N/A'}</td>
+                    <td className="py-3 px-4 text-text-muted">{off.jurisdiction?.district || 'N/A'}</td>
                     <td className="py-3 px-4">
                       {off.available ? (
-                        <span className="text-emerald-700 bg-emerald-100 px-2 py-1 rounded text-xs font-semibold">Available</span>
+                        <span className="inline-flex items-center gap-1.5 text-status-success bg-status-success-bg px-2.5 py-1 rounded-full text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-status-success"></span>
+                          Available
+                        </span>
                       ) : (
-                        <span className="text-rose-700 bg-rose-100 px-2 py-1 rounded text-xs font-semibold">Unavailable</span>
+                        <span className="inline-flex items-center gap-1.5 text-status-error bg-status-error-bg px-2.5 py-1 rounded-full text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-status-error"></span>
+                          Unavailable
+                        </span>
                       )}
                     </td>
                     <td className="py-3 px-4 text-center">
-                      <span className="text-lg font-bold text-blue-700">{off.workload}</span>
+                      <span className="text-lg font-bold text-amber-gold">{off.workload}</span>
                     </td>
                   </tr>
                 ))}
                 {officers.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-slate-500">No approved officers found.</td>
+                    <td colSpan={5} className="py-8 text-center text-text-muted">No approved officers found.</td>
                   </tr>
                 )}
               </tbody>
@@ -215,12 +221,12 @@ export const OfficerVerificationPage: React.FC = () => {
 
         {/* Tab: Heatmap */}
         {activeTab === 'heatmap' && (
-          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Application Distribution</h3>
+          <div className="bg-card-white p-4 rounded-2xl border border-card-border shadow-sm">
+            <h3 className="text-lg font-bold text-text-primary mb-4">Application Distribution</h3>
             {heatmapMarkers.length > 0 ? (
-              <GISMap markers={heatmapMarkers} className="w-full h-[500px] rounded border border-slate-200 z-0" />
+              <GISMap markers={heatmapMarkers} className="w-full h-[500px] rounded-xl border border-card-border z-0" />
             ) : (
-              <div className="py-12 text-center text-slate-500 border border-dashed border-slate-300 rounded-lg">
+              <div className="py-12 text-center text-text-muted border border-dashed border-card-border rounded-xl">
                 No geo-located applications available for heatmap.
               </div>
             )}
